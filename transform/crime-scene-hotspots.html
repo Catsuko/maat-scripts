@@ -62,6 +62,12 @@
         .range(["hsl(185,60%,99%)", "hsl(187,40%,70%)"])
         .interpolate(d3.interpolateHcl);
 
+
+    var ratingColor = d3.scale.sqrt()
+        .domain([0, 1])
+        .range(["hsl(115,100%,35%)", "hsl(345,100%,39%)"])
+        .interpolate(d3.interpolateHcl);
+
     var pack = d3.layout.pack()
         .padding(2)
         .size([innerDiameter, innerDiameter])
@@ -83,9 +89,9 @@
             .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
             .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
             .attr("r", function(d) { return d.r; })
-            .style("fill", function(d) { return d.weight > 0.0 ? "darkred" :
+            .style("fill", function(d) { return d.weight !== undefined ? ratingColor(d.weight) :
                 d.children ? color(d.depth) : "WhiteSmoke"; })
-            .style("fill-opacity", function(d) { return d.weight; })
+            .style("fill-opacity", function(d) { return 1; })
             .on("click", function(d) { return d.children ? zoom(d) : view(d) });
 
         svg.append("g").selectAll("text")
@@ -123,6 +129,7 @@
         }
 
         function zoom(d, i) {
+            console.log(d);
             var focus0 = focus;
             focus = d;
 
